@@ -445,8 +445,12 @@ const TrialArtifact: FC<{ trial: Trial }> = ({ trial }) => {
               </Card>
             )
           } else if (
-            a.filename.endsWith(".stl") ||
-            a.filename.endsWith(".3dm")
+            a.mimetype.startsWith("model") &&
+            (a.filename.endsWith(".stl") ||
+              a.filename.endsWith(".3dm") ||
+              a.filename.endsWith(".obj") ||
+              a.filename.endsWith(".glb") ||
+              a.filename.endsWith(".gltf"))
           ) {
             return (
               <Card

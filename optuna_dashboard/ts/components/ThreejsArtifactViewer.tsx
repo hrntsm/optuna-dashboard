@@ -4,6 +4,8 @@ import { Canvas } from "@react-three/fiber"
 import { GizmoHelper, GizmoViewport, OrbitControls } from "@react-three/drei"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
 import { Rhino3dmLoader } from "three/examples/jsm/loaders/3DMLoader"
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader"
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { PerspectiveCamera } from "three"
 
 interface ThreejsArtifactViewerProps {
@@ -63,9 +65,11 @@ export const ThreejsArtifactViewer: React.FC<ThreejsArtifactViewerProps> = (
         }
       })
     } else if ("3dm" === props.filetype) {
-      const loader = new Rhino3dmLoader()
-      loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@7.15.0/")
-      loader.load(props.src, (object: THREE.Object3D) => {
+      const rhinoLoader = new Rhino3dmLoader()
+      rhinoLoader.setLibraryPath(
+        "https://cdn.jsdelivr.net/npm/rhino3dm@7.15.0/"
+      )
+      rhinoLoader.load(props.src, (object: THREE.Object3D) => {
         const meshes = object.children as THREE.Mesh[]
         const rhinoGeometries = meshes.map((mesh) => mesh.geometry)
         if (rhinoGeometries.length > 0) {
@@ -75,6 +79,38 @@ export const ThreejsArtifactViewer: React.FC<ThreejsArtifactViewerProps> = (
           handleLoadedGeometries(rhinoGeometries)
         }
       })
+    } else if ("obj" === props.filetype) {
+      const objLoader = new OBJLoader()
+      objLoader.load(props.src, (object: THREE.Object3D) => {
+        const meshes = object.children as THREE.Mesh[]
+        const objGeometries = meshes.map((mesh) => mesh.geometry)
+        if (objGeometries.length > 0) {
+          handleLoadedGeometries(objGeometries)
+        }
+      })
+    } else if ("glb" === props.filetype || "gltf" === props.filetype) {
+      const gltfLoader = new GLTFLoader()
+      gltfLoader.load(
+        props.src,
+        (gltf) => {
+          const object3ds = gltf.scene.children as THREE.Object3D[]
+          console.log(object3ds)
+          const glbGeometries: THREE.BufferGeometry[] = []
+
+          object3ds.forEach((obj3d) => {
+            const meshes = obj3d.children as THREE.Mesh[]
+            glbGeometries.push(...meshes.map((mesh) => mesh.geometry))
+          })
+          console.log(glbGeometries)
+          if (glbGeometries.length > 0) {
+            handleLoadedGeometries(glbGeometries)
+          }
+        },
+        undefined,
+        (error) => {
+          console.error(error)
+        }
+      )
     }
     const maxModelSize = Math.max(modelSize.x, modelSize.y, modelSize.z)
     const cameraSet = new THREE.PerspectiveCamera(
