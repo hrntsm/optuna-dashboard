@@ -59,35 +59,56 @@ export const ThreejsArtifactViewer: React.FC<ThreejsArtifactViewerProps> = (
   useEffect(() => {
     if ("stl" === props.filetype) {
       const stlLoader = new STLLoader()
-      stlLoader.load(props.src, (stlGeometries: THREE.BufferGeometry) => {
-        if (stlGeometries) {
-          handleLoadedGeometries([stlGeometries])
+      stlLoader.load(
+        props.src,
+        (stlGeometries: THREE.BufferGeometry) => {
+          if (stlGeometries) {
+            handleLoadedGeometries([stlGeometries])
+          }
+        },
+        undefined,
+        (error) => {
+          console.error(error)
         }
-      })
+      )
     } else if ("3dm" === props.filetype) {
       const rhinoLoader = new Rhino3dmLoader()
       rhinoLoader.setLibraryPath(
         "https://cdn.jsdelivr.net/npm/rhino3dm@7.15.0/"
       )
-      rhinoLoader.load(props.src, (object: THREE.Object3D) => {
-        const meshes = object.children as THREE.Mesh[]
-        const rhinoGeometries = meshes.map((mesh) => mesh.geometry)
-        if (rhinoGeometries.length > 0) {
-          rhinoGeometries.forEach((rhinoGeometry) => {
-            rhinoGeometry.rotateX(-Math.PI / 4)
-          })
-          handleLoadedGeometries(rhinoGeometries)
+      rhinoLoader.load(
+        props.src,
+        (object: THREE.Object3D) => {
+          const meshes = object.children as THREE.Mesh[]
+          const rhinoGeometries = meshes.map((mesh) => mesh.geometry)
+          if (rhinoGeometries.length > 0) {
+            rhinoGeometries.forEach((rhinoGeometry) => {
+              rhinoGeometry.rotateX(-Math.PI / 4)
+            })
+            handleLoadedGeometries(rhinoGeometries)
+          }
+        },
+        undefined,
+        (error) => {
+          console.error(error)
         }
-      })
+      )
     } else if ("obj" === props.filetype) {
       const objLoader = new OBJLoader()
-      objLoader.load(props.src, (object: THREE.Object3D) => {
-        const meshes = object.children as THREE.Mesh[]
-        const objGeometries = meshes.map((mesh) => mesh.geometry)
-        if (objGeometries.length > 0) {
-          handleLoadedGeometries(objGeometries)
+      objLoader.load(
+        props.src,
+        (object: THREE.Object3D) => {
+          const meshes = object.children as THREE.Mesh[]
+          const objGeometries = meshes.map((mesh) => mesh.geometry)
+          if (objGeometries.length > 0) {
+            handleLoadedGeometries(objGeometries)
+          }
+        },
+        undefined,
+        (error) => {
+          console.error(error)
         }
-      })
+      )
     } else if ("glb" === props.filetype || "gltf" === props.filetype) {
       const gltfLoader = new GLTFLoader()
       gltfLoader.load(
