@@ -31,6 +31,7 @@ import { useConstants } from "../constantsProvider"
 import { artifactIsAvailable } from "../state"
 import { useQuery } from "../urlQuery"
 import { TrialArtifactCards } from "./Artifact/TrialArtifactCards"
+import { GraphRadarChart } from "./GraphRadar"
 import { TrialNote } from "./Note"
 import { TrialFormWidgets } from "./TrialFormWidgets"
 
@@ -128,7 +129,15 @@ export const TrialListDetail: FC<{
   directions: Optuna.StudyDirection[]
   metricNames: string[]
   formWidgets?: FormWidgets
-}> = ({ trial, isBestTrial, directions, metricNames, formWidgets }) => {
+  bestTrials?: Trial[]
+}> = ({
+  trial,
+  isBestTrial,
+  directions,
+  metricNames,
+  formWidgets,
+  bestTrials,
+}) => {
   const theme = useTheme()
   const action = actionCreator()
   const artifactEnabled = useRecoilValue<boolean>(artifactIsAvailable)
@@ -306,6 +315,13 @@ export const TrialListDetail: FC<{
         )}
       </Box>
       {artifactEnabled && <TrialArtifactCards trial={trial} />}
+      {directions.length > 2 && (
+        <GraphRadarChart
+          metricNames={metricNames}
+          trial={trial}
+          bestTrials={bestTrials}
+        />
+      )}
     </Box>
   )
 }
@@ -563,6 +579,7 @@ export const TrialList: FC<{ studyDetail: StudyDetail | null }> = ({
                   directions={studyDetail?.directions || []}
                   metricNames={studyDetail?.metric_names || []}
                   formWidgets={studyDetail?.form_widgets}
+                  bestTrials={studyDetail?.best_trials}
                 />
               ))}
         </Box>
