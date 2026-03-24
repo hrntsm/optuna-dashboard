@@ -1,8 +1,36 @@
+const fs = require("fs")
+const path = require("path")
 const webpack = require("webpack")
 
 const mode =
   process.env.NODE_ENV === "production" ? "production" : "development"
 const isDev = mode === "development"
+
+const RHINO3DM_ASSETS = ["rhino3dm.js", "rhino3dm.wasm"]
+
+
+class CopyRhino3dmAssetsPlugin {
+  apply(compiler) {
+    const copyAssets = () => {
+      const sourceDir = path.resolve(
+        __dirname,
+        "node_modules/three/examples/jsm/libs/rhino3dm"
+      )
+      const destinationDir = path.resolve(compiler.options.output.path, "rhino3dm")
+
+      fs.mkdirSync(destinationDir, { recursive: true })
+      RHINO3DM_ASSETS.forEach((filename) => {
+        fs.copyFileSync(
+          path.join(sourceDir, filename),
+          path.join(destinationDir, filename)
+        )
+      })
+    }
+
+    compiler.hooks.beforeRun.tap("CopyRhino3dmAssetsPlugin", copyAssets)
+    compiler.hooks.watchRun.tap("CopyRhino3dmAssetsPlugin", copyAssets)
+  }
+}
 
 
 var config = {
@@ -44,6 +72,7 @@ var config = {
     extensions: [".ts", ".tsx", ".js"],
   },
   plugins: [
+    new CopyRhino3dmAssetsPlugin(),
     new webpack.DefinePlugin({
       API_ENDPOINT: JSON.stringify(process.env.API_ENDPOINT),
       URL_PREFIX: JSON.stringify(process.env.URL_PREFIX || "/dashboard"),

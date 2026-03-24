@@ -11,6 +11,8 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader"
 import { Artifact } from "ts/types/optuna"
 
+const RHINO3DM_LIBRARY_PATH = "/static/rhino3dm/"
+
 export const isThreejsArtifact = (artifact: Artifact): boolean => {
   return (
     artifact.filename.endsWith(".stl") ||
@@ -200,7 +202,7 @@ function loadRhino3dm(
   handleLoadedGeometries: (geometries: THREE.BufferGeometry[]) => THREE.Box3
 ) {
   const rhino3dmLoader = new Rhino3dmLoader()
-  rhino3dmLoader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@8.4.0/")
+  rhino3dmLoader.setLibraryPath(RHINO3DM_LIBRARY_PATH)
   rhino3dmLoader.load(props.src, (object: THREE.Object3D) => {
     const meshes = object.children as THREE.Mesh[]
     const rhinoGeometries = meshes.map((mesh) => mesh.geometry)
