@@ -120,6 +120,7 @@ def create_app(
                     "frame-src 'self'",
                     "object-src 'none'",
                     "connect-src 'self'",
+                    "worker-src 'self' blob:",
                     "style-src 'self' data: 'unsafe-inline'",
                     script_src_str,
                 ]
