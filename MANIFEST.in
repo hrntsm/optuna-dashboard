@@ -1,0 +1,3 @@
+include optuna_dashboard/index.html
+recursive-include optuna_dashboard/public *
+recursive-include optuna_dashboard/img *

@@ -66,8 +66,8 @@ optuna-dashboard = "optuna_dashboard._cli:main"
 version = {attr = "optuna_dashboard.__version__"}
 
 [tool.setuptools]
-include-package-data = false
-package-data = { "optuna_dashboard" = ["public/*", "img/*", "index.html"] }
+include-package-data = true
+package-data = { "optuna_dashboard" = ["public/*", "public/rhino3dm/*", "img/*", "index.html"] }
 
 [tool.setuptools.packages.find]
 include = ["optuna_dashboard*"]
